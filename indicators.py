@@ -1,4 +1,3 @@
-import yfinance as yf
 import numpy as np
 
 
@@ -215,15 +214,3 @@ def STREND(df, n=10, m=3):
 
     df.dropna(inplace=True)
     return df['Strend']
-
-
-##############################################################################
-data_df = get_historical_data("TCS.NS", "5m", "5d")
-
-macd = MACD(data_df)
-bb = BBANDS(data_df)
-atr = ATR(data_df)
-rsi = RSI(data_df)
-stoch = STOCH(data_df)
-adx = ADX(data_df)
-strend = STREND(data_df)
