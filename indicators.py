@@ -1,17 +1,6 @@
 import numpy as np
 
 
-def get_historical_data(ticker, interval="5m", period="5d"):
-    """
-    function to get historical data for given ticker
-    :param ticker: str, e.g. ITC.NS
-    :param interval: str, valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
-    :param period: str, valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
-    :return: DataFrame
-    """
-    return yf.download(ticker, period=period, interval=interval)
-
-
 def MACD(df, a=12, b=26, c=9):
     """
     function to calculate Moving Average Convergence Divergence
