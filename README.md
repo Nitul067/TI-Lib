@@ -5,4 +5,4 @@ This is a technical indicators library which is highly useful in the technical a
 >   Stochastic, ROC, ADX, SuperTrend etc.
 
 ### Inputs to every indicator function
-You have to give pandas dataframe as first parameter with columns are in this ["Open", "High", "Low", "Close", "Volume"] format.
+You have to give pandas dataframe as first parameter with columns are in ["Open", "High", "Low", "Close", "Volume"] format.
