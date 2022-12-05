@@ -1,6 +1,42 @@
 import numpy as np
 
 
+def SMA(df, n=9):
+    """
+    function to calculate Simple Moving Average
+    :param df: DataFrame
+    :param n: int, look-back period
+    :return: Series
+    """
+
+    df["SMA"] = df["Close"].rolling(n).mean()
+    df.dropna(inplace=True)
+    return df["SMA"]
+
+
+def EMA(df, n=9):
+    """
+    function to calculate Exponential Moving Average
+    :param df: DataFrame
+    :param n: int, look-back period
+    :return: Series
+    """
+
+    multiplier = 2 / (n+1)
+    sma = df["Close"].rolling(n).mean()
+    ema = np.full(len(df["Close"]), np.nan)
+    ema[len(sma) - len(sma.dropna())] = sma.dropna()[0]
+
+    for i in range(len(df["Close"])):
+        if not np.isnan(ema[i-1]):
+            ema[i] = ((df["Close"].iloc[i] - ema[i-1]) * multiplier) + ema[i-1]
+
+    ema[len(sma) - len(sma.dropna())] = np.nan
+    df["EMA"] = ema
+    df.dropna(inplace=True)
+    return df["EMA"]
+
+
 def MACD(df, a=12, b=26, c=9):
     """
     function to calculate Moving Average Convergence Divergence
