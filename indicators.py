@@ -142,6 +142,21 @@ def ROC(df, n=9):
     return df["ROC"]
 
 
+def DC(df, n=20):
+    """
+    function to calculate Donchian Channels
+    :param df: DataFrame
+    :param n: int, look-back period
+    :return: DataFrame
+    """
+
+    df["dcUpper"] = df["Close"].rolling(n).max()
+    df["dcLower"] = df["Close"].rolling(n).min()
+    df["dcMiddle"] = (df["dcUpper"] + df["dcLower"]) / 2
+    df.dropna(inplace=True)
+    return df[["dcUpper", "dcMiddle", "dcLower"]]
+
+
 def ADX(df, n=14):
     """
     function to calculate ADX
