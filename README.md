@@ -1,2 +1,2 @@
 # TI-Lib
-Python Project for Technical Indicators
+Technical Indicators Library
