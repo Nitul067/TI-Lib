@@ -93,6 +93,19 @@ def STOCH(df, n=14, k=1, d=3):
     return df[["%K", "%D"]]
 
 
+def ROC(df, n=9):
+    """
+    function to calculate Rate of Change Indicator
+    :param df: DataFrame
+    :param n: int, look-back period
+    :return: Series
+    """
+    
+    df["ROC"] = 100 * (df['Close'].diff(n) / df['Close'].shift(n))
+    df.dropna(inplace=True)
+    return df["ROC"]
+
+
 def ADX(df, n=14):
     """
     function to calculate ADX
