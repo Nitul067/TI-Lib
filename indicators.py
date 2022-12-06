@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 
 def SMA(df, n=9):
@@ -267,3 +268,29 @@ def STREND(df, n=10, m=3):
 
     df.dropna(inplace=True)
     return df['Strend']
+
+
+def VWAP(df):
+    """
+    function to calculate Volume Weighted Average Price
+    :param df: DataFrame
+    :return: Series
+    """
+
+    interval = (df.index[1] - df.index[0]).seconds / 60
+    factor = 375 / interval
+    start = 0
+    end = int(factor)
+    vwap = []
+    for i in range(math.ceil(len(df)/factor)):
+        temp_df = df.loc[df.index[start:end]]
+        temp_df["TP"] = (temp_df["High"] + temp_df["Low"] + temp_df["Close"]) / 3
+        temp_df["PV"] = temp_df["TP"] * temp_df["Volume"]
+        vwap.extend((temp_df["PV"].cumsum() / temp_df["Volume"].cumsum()).tolist())
+        start = int(end)
+        end = int(factor * (i+2))
+        if len(df) < end:
+            end = len(df)
+
+    df["VWAP"] = np.array(vwap)
+    return df["VWAP"]
