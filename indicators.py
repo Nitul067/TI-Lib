@@ -294,3 +294,101 @@ def VWAP(df):
 
     df["VWAP"] = np.array(vwap)
     return df["VWAP"]
+
+
+def PIVOTS(df, p_type="Traditional"):
+    """
+    function to calculate
+    :param df: DataFrame,
+    provide timeframe value as follows:
+    for intraday resolutions up to and including 15 min, DAY ("1d") is used;
+    for intraday resolutions more than 15 min, WEEK ("1wk") is used;
+    for daily resolutions MONTH is used ("1mo");
+    for weekly and monthly resolutions, 12-MONTH ("12mo") is used;
+    Note: use notation as per your data source.
+    :param p_type: str, valid type: ["Traditional", "Fibonacci", "Woodie", "Classic", "Demark", "Camarilla"]
+    :return: DataFrame
+    """
+
+    match p_type:
+        case "Traditional":
+            df["PP"] = (df["High"].shift(1) + df["Low"].shift(1) + df["Close"].shift(1)) / 3
+            df["R1"] = (df["PP"] * 2) - df["Low"].shift(1)
+            df["S1"] = (df["PP"] * 2) - df["High"].shift(1)
+            df["R2"] = df["PP"] + (df["High"].shift(1) - df["Low"].shift(1))
+            df["S2"] = df["PP"] - (df["High"].shift(1) - df["Low"].shift(1))
+            df["R3"] = (df["PP"] * 2) + (df["High"].shift(1) - (2 * df["Low"].shift(1)))
+            df["S3"] = (df["PP"] * 2) - ((2 * df["High"].shift(1)) - df["Low"].shift(1))
+            df["R4"] = (df["PP"] * 3) + (df["High"].shift(1) - (3 * df["Low"].shift(1)))
+            df["S4"] = (df["PP"] * 3) - ((3 * df["High"].shift(1)) - df["Low"].shift(1))
+            df["R5"] = (df["PP"] * 4) + (df["High"].shift(1) - (4 * df["Low"].shift(1)))
+            df["S5"] = (df["PP"] * 4) - ((4 * df["High"].shift(1)) - df["Low"].shift(1))
+            return df[["R5", "R4", "R3", "R2", "R1", "PP", "S1", "S2", "S3", "S4", "S5"]]
+        case "Fibonacci":
+            df["PP"] = (df["High"].shift(1) + df["Low"].shift(1) + df["Close"].shift(1)) / 3
+            df["R1"] = df["PP"] + 0.382 * (df["High"].shift(1) - df["Low"].shift(1))
+            df["S1"] = df["PP"] - 0.382 * (df["High"].shift(1) - df["Low"].shift(1))
+            df["R2"] = df["PP"] + 0.618 * (df["High"].shift(1) - df["Low"].shift(1))
+            df["S2"] = df["PP"] - 0.618 * (df["High"].shift(1) - df["Low"].shift(1))
+            df["R3"] = df["PP"] + (df["High"].shift(1) - df["Low"].shift(1))
+            df["S3"] = df["PP"] - (df["High"].shift(1) - df["Low"].shift(1))
+            return df[["R3", "R2", "R1", "PP", "S1", "S2", "S3"]]
+        case "Woodie":
+            df["PP"] = (df["High"].shift(1) + df["Low"].shift(1) + (df["Open"] * 2)) / 4
+            df["R1"] = (df["PP"] * 2) - df["Low"].shift(1)
+            df["S1"] = (df["PP"] * 2) - df["High"].shift(1)
+            df["R2"] = df["PP"] + (df["High"].shift(1) - df["Low"].shift(1))
+            df["S2"] = df["PP"] - (df["High"].shift(1) - df["Low"].shift(1))
+            df["R3"] = df["High"].shift(1) + ((df["PP"] - df["Low"].shift(1)) * 2)
+            df["S3"] = df["Low"].shift(1) - ((df["High"].shift(1) - df["PP"]) * 2)
+            df["R4"] = df["R3"] + (df["High"].shift(1) - df["Low"].shift(1))
+            df["S4"] = df["S3"] - (df["High"].shift(1) - df["Low"].shift(1))
+            return df[["R4", "R3", "R2", "R1", "PP", "S1", "S2", "S3", "S4"]]
+        case "Classic":
+            df["PP"] = (df["High"].shift(1) + df["Low"].shift(1) + df["Close"].shift(1)) / 3
+            df["R1"] = (df["PP"] * 2) - df["Low"].shift(1)
+            df["S1"] = (df["PP"] * 2) - df["High"].shift(1)
+            df["R2"] = df["PP"] + (df["High"].shift(1) - df["Low"].shift(1))
+            df["S2"] = df["PP"] - (df["High"].shift(1) - df["Low"].shift(1))
+            df["R3"] = df["PP"] + ((df["High"].shift(1) - df["Low"].shift(1)) * 2)
+            df["S3"] = df["PP"] - ((df["High"].shift(1) - df["Low"].shift(1)) * 2)
+            df["R4"] = df["PP"] + ((df["High"].shift(1) - df["Low"].shift(1)) * 3)
+            df["S4"] = df["PP"] - ((df["High"].shift(1) - df["Low"].shift(1)) * 3)
+            return df[["R4", "R3", "R2", "R1", "PP", "S1", "S2", "S3", "S4"]]
+        case "Demark":
+            pp = []
+            r1 = []
+            s1 = []
+            for i in range(len(df)):
+                if i == 0:
+                    pp.append(np.NaN)
+                    r1.append(np.NaN)
+                    s1.append(np.NaN)
+                else:
+                    if df.iloc[i-1]["Open"] == df.iloc[i-1]["Close"]:
+                        x = df.iloc[i-1]["High"] + df.iloc[i-1]["Low"] + (2 * df.iloc[i-1]["Close"])
+                    elif df.iloc[i-1]["Close"] > df.iloc[i-1]["Open"]:
+                        x = (2 * df.iloc[i-1]["High"]) + df.iloc[i-1]["Low"] + df.iloc[i-1]["Close"]
+                    else:
+                        x = (2 * df.iloc[i-1]["Low"]) + df.iloc[i-1]["High"] + df.iloc[i-1]["Close"]
+                    pp.append(x/4)
+                    r1.append((x/2) - df.iloc[i-1]["Low"])
+                    s1.append((x/2) - df.iloc[i-1]["High"])
+
+            df["PP"] = np.array(pp)
+            df["R1"] = np.array(r1)
+            df["S1"] = np.array(s1)
+            return df[["R1", "PP", "S1"]]
+        case "Camarilla":
+            df["PP"] = (df["High"].shift(1) + df["Low"].shift(1) + df["Close"].shift(1)) / 3
+            df["R1"] = df["Close"].shift(1) + (1.1 * (df["High"].shift(1) - df["Low"].shift(1)) / 12)
+            df["S1"] = df["Close"].shift(1) - (1.1 * (df["High"].shift(1) - df["Low"].shift(1)) / 12)
+            df["R2"] = df["Close"].shift(1) + (1.1 * (df["High"].shift(1) - df["Low"].shift(1)) / 6)
+            df["S2"] = df["Close"].shift(1) - (1.1 * (df["High"].shift(1) - df["Low"].shift(1)) / 6)
+            df["R3"] = df["Close"].shift(1) + (1.1 * (df["High"].shift(1) - df["Low"].shift(1)) / 4)
+            df["S3"] = df["Close"].shift(1) - (1.1 * (df["High"].shift(1) - df["Low"].shift(1)) / 4)
+            df["R4"] = df["Close"].shift(1) + (1.1 * (df["High"].shift(1) - df["Low"].shift(1)) / 2)
+            df["S4"] = df["Close"].shift(1) - (1.1 * (df["High"].shift(1) - df["Low"].shift(1)) / 2)
+            df["R5"] = (df["High"].shift(1) / df["Low"].shift(1)) * df["Close"].shift(1)
+            df["S5"] = df["Close"].shift(1) - (df["R5"] - df["Close"].shift(1))
+            return df[["R5", "R4", "R3", "R2", "R1", "PP", "S1", "S2", "S3", "S4", "S5"]]
