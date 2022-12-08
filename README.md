@@ -35,5 +35,5 @@ import tilib
 print(tilib.get_functions())
 ```
 
-### Input to every indicator function
+## Input to every indicator function
 You have to give data in the form of pandas dataframe as first parameter with columns are in ["Open", "High", "Low", "Close", "Volume"] format.
