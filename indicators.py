@@ -392,3 +392,13 @@ def PIVOTS(df, p_type="Traditional"):
             df["R5"] = (df["High"].shift(1) / df["Low"].shift(1)) * df["Close"].shift(1)
             df["S5"] = df["Close"].shift(1) - (df["R5"] - df["Close"].shift(1))
             return df[["R5", "R4", "R3", "R2", "R1", "PP", "S1", "S2", "S3", "S4", "S5"]]
+
+        
+def get_functions():
+    """
+    Returns a list of all the functions supported by TI-Lib
+    """
+    
+    fun_list = ["SMA", "EMA", "MACD", "BBANDS", "ATR", "RSI", "STOCH",
+                "ROC", "DC", "ADX", "STREND", "VWAP", "PIVOTS"]
+    return fun_list
