@@ -9,7 +9,7 @@ This is a technical indicators library which is highly useful in the technical a
 You can install from PyPI:
 
 ```
-$ pip install TI-Lib
+pip install TI-Lib
 ```
 
 ## Getting started with TI-Lib
