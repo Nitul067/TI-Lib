@@ -24,10 +24,6 @@ print(rsi)
 
 ```
 
-## list of functions
-print(talib.get_functions())
-```
-
 ## Supported Indicators
 
 You can get all the technical indicator functions supported by TI-Lib
@@ -35,8 +31,8 @@ You can get all the technical indicator functions supported by TI-Lib
 ```python
 import tilib
 
-# list of functions
-print(talib.get_functions())
+# List of functions
+print(tilib.get_functions())
 ```
 
 ### Input to every indicator function
